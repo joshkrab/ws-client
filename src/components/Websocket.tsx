@@ -27,7 +27,8 @@ export const Websocket = () => {
 	}, [])
 
 	const onSubmit = () => {
-		socket.emit('newMessage', value)
+		socket.emit('newMessage', value);
+		setValue('');
 	}
 
 	return (
