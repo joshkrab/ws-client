@@ -1,14 +1,13 @@
 import React, { useId } from 'react';
 import Styles from './Textarea.module.css';
 
-export default function Textarea({ labeltext, placeholder, onChange }) {
+export default function Textarea(props) {
 	const id = useId();
 	return (
 		<div className={Styles.Textarea}>
-			<label htmlFor={id}>{labeltext}</label>
+			<label htmlFor={id}>{props.labeltext}</label>
 			<textarea
-				onChange={(event) => onChange(event.target.value)}
-				placeholder={placeholder}
+				{...props}
 				id={id}
 			></textarea>
 		</div>

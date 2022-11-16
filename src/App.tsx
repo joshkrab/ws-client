@@ -6,14 +6,19 @@ import {socket} from './contexts/WebsocketContext';
 import reducer from './contexts/reducer';
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, {joined: false, roomId: null, userName: null});
+  const [state, dispatch] = useReducer(reducer, {
+    joined: false,
+    roomId: null,
+    userName: null,
+    users: [], 
+    messages: [],
+  });
   const effectRan = useRef(false);
 
   const onLogin = (obj:{
 			roomId: string,
 			userName: string,
   }) => { 
-    console.log(state);
 
     dispatch({
       type: 'JOINED',
@@ -28,6 +33,10 @@ function App() {
     if (effectRan.current === false) {
 
       socket.on('ROOM:JOINED', (users) => {
+        dispatch({
+          type: 'SET_USERS',
+          payload: users,
+        })
         console.log('New user', users);
       });
     };
@@ -37,14 +46,11 @@ function App() {
       console.log('unmounted');
       effectRan.current = true;
     };
-
   }, []);
 
   return (
-    <div>
-      {/* {!state.joined && <EnterMenu onLogin={ onLogin}/>} */}
-      <EnterMenu onLogin={onLogin} />
-      <Websocket />
+    <div className='App'>
+      {!state.joined ? <EnterMenu onLogin={onLogin} /> : <Websocket {...state} />}
     </div>
   );
 };
