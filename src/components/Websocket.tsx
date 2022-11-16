@@ -16,7 +16,7 @@ export const Websocket = () => {
 
 	useEffect(() => {
 		socket.on('connect', () => {
-			console.log('Connected!');
+			console.log(`Listening 'connect'`);
 		})
 
 		socket.on('onMessage', (data: MessagePayload) => {

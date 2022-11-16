@@ -23,10 +23,10 @@ export default function EnterMenu({onLogin}:{ onLogin: (obj:{
 		}
 		
 		setLoading(true);
-
 		await axios.post('http://localhost:9001/chat', obj);
 		onLogin(obj);
 	}
+
 	return (
 		<div>
 			<MyInput type="text"
