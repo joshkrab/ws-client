@@ -1,4 +1,5 @@
 import React, {useEffect, useReducer, useRef} from 'react';
+import axios from 'axios';
 import './App.css';
 import EnterMenu from './components/EnterMenu';
 import {Websocket} from './components/Websocket';
@@ -15,10 +16,10 @@ function App() {
   });
   const effectRan = useRef(false);
 
-  const onLogin = (obj:{
-			roomId: string,
-			userName: string,
-  }) => { 
+  const onLogin = async (obj: {
+    roomId: string,
+    userName: string,
+  }) => {
 
     dispatch({
       type: 'JOINED',
@@ -26,19 +27,22 @@ function App() {
     });
     // Create event:
     socket.emit('ROOM:JOIN', obj);
+    const {data} = await axios.get(`http://localhost:9001/chat/rooms/${obj.roomId}`);
+    setUsers(data.users);
   };
+  // 2:23
+
+  const setUsers = (users: string[]) => {
+    dispatch({
+      type: 'SET_USERS',
+      payload: {users: users},
+    })
+}
 
 // Only for testing:
   useEffect(() => {
     if (effectRan.current === false) {
-
-      socket.on('ROOM:JOINED', (users) => {
-        dispatch({
-          type: 'SET_USERS',
-          payload: users,
-        })
-        console.log('New user', users);
-      });
+      socket.on('ROOM:SET_USERS', setUsers);
     };
 
      // When unmount component: close and open, otherwise it is mounted twice:

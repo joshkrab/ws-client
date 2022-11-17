@@ -15,7 +15,7 @@ interface Iaction {
 	users?: string[] | never[],
 	messages?: string[] | never[],
 	},
-} 
+}
 
 const reducer = (state: IstateR, action: Iaction) => { 
 	switch (action.type) {
@@ -24,17 +24,17 @@ const reducer = (state: IstateR, action: Iaction) => {
 				...state,
 				joined: true,
 				userName: action.payload.userName as string,
-				roomId: action.payload.roomId as string,
+				roomId: action.payload.roomId  as string,
 			}
 		case 'SET_USERS':
 			return {
 				...state,
-				users: action.payload as string[],
+				users: action.payload.users as string[],
 			}
 		case 'SET_MESSAGES':
 			return {
 				...state,
-				messages: action.payload as string[],
+				messages: action.payload.messages as string[],
 			}
 		default:
 			return state;
