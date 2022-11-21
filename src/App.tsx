@@ -4,7 +4,7 @@ import './App.css';
 import EnterMenu from './components/EnterMenu';
 import {Websocket} from './components/Websocket';
 import {socket} from './contexts/WebsocketContext';
-import reducer from './contexts/reducer';
+import reducer, {IMessage} from './contexts/reducer';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, {
@@ -30,19 +30,25 @@ function App() {
     const {data} = await axios.get(`http://localhost:9001/chat/rooms/${obj.roomId}`);
     setUsers(data.users);
   };
-  // 2:23
 
   const setUsers = (users: string[]) => {
     dispatch({
       type: 'SET_USERS',
       payload: {users: users},
     })
-}
+  }
 
-// Only for testing:
+  const setMessage = (message: IMessage) => {
+    dispatch({
+      type: 'SET_MESSAGES',
+      payload: message,
+    })
+  }
+
   useEffect(() => {
     if (effectRan.current === false) {
       socket.on('ROOM:SET_USERS', setUsers);
+      socket.on('ROOM:NEW_MESSAGE', setMessage);
     };
 
      // When unmount component: close and open, otherwise it is mounted twice:

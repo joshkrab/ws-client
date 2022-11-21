@@ -1,9 +1,14 @@
+export interface IMessage {
+	userName: string,
+	text: string,
+}
+
 export interface IstateR {
 	joined: boolean,
 	roomId: string | null,
 	userName: string | null,
 	users: string[] | never[],
-	messages: string[] | never[],
+	messages: IMessage[] | never[],
 } 
 
 interface Iaction {
@@ -13,7 +18,7 @@ interface Iaction {
 	userName?: string | null,
 	roomId?: string | null,
 	users?: string[] | never[],
-	messages?: string[] | never[],
+	messages?: IMessage[] | never[],
 	},
 }
 
@@ -34,7 +39,7 @@ const reducer = (state: IstateR, action: Iaction) => {
 		case 'SET_MESSAGES':
 			return {
 				...state,
-				messages: action.payload.messages as string[],
+				messages: [...state.messages, action.payload] as IMessage[],
 			}
 		default:
 			return state;

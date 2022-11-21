@@ -3,19 +3,15 @@ import {WebsocketContext} from '../contexts/WebsocketContext';
 import Button from './common/Button/Button';
 import Textarea from './common/Textarea/Textarea';
 import { v4 as uuid } from 'uuid';
+import {IMessage} from '../contexts/reducer';
 
-type MessagePayload = {
-	message: string;
-	content: string;
-}
-
-export const Websocket = ({users, messages}: {
+export const Websocket = ({users, messages, userName, roomId}: {
 		users: string[] | never[],
-		messages: string[] | never[],
+		messages: IMessage[] | never[],
+		userName: string | null,
+		roomId: string | null,
 }) => {
-	const [value, setValue] = useState('');
 	const [messageValue, setMessageValue] = useState('');
-	//const [messages, setMessages] = useState<MessagePayload[]>([]);
 	const socket = useContext(WebsocketContext);
 
 	useEffect(() => {
@@ -23,24 +19,21 @@ export const Websocket = ({users, messages}: {
 			console.log(`Listening 'connect'`);
 		})
 
-		socket.on('onMessage', (data: MessagePayload) => {
-			console.log('onMessage event received:');
-			console.log(data);
-			//setMessages((prev) => [...prev, data]);
-		})
-
 		// When unmount component: close and open, otherwise it is mounted twice:
 		return () => {
 			console.log('Unregistering Events...');
 			socket.off('connect');
-			socket.off('onMessage');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const onSubmit = () => {
-		socket.emit('newMessage', value);
-		setValue('');
+	const sendMessage = () => {
+		socket.emit('ROOM:NEW_MESSAGE', {
+			text: messageValue,
+			userName,
+			roomId,
+		});
+		setMessageValue('');
 	}
 
 	return (
@@ -57,22 +50,18 @@ export const Websocket = ({users, messages}: {
 
 			<div className="chat-messages">
 				<div className="messages">
-					<div className="message">
-						<p>Lorem ipsum dolor sit amet.</p>
-						<div>
-							<span>Test User</span>
-						</div>
-					</div>
-
-					<div className="message">
-						<p>Lorem ipsum dolor sit amet.</p>
-						<div>
-							<span>Test User</span>
-						</div>
-					</div>
+					{messages.map(message => {
+						const unique_id = uuid();
+						return <div key={unique_id} className="message">
+										<p>{message.text}</p>
+										<div>
+												<span>{message.userName}</span>
+										</div>
+									</div>
+									}
+						)}
 				</div>
 
-				<form>		
 					<Textarea
 						value={messageValue}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessageValue(e.target.value)}
@@ -83,34 +72,10 @@ export const Websocket = ({users, messages}: {
 					
 						<Button
 						buttontext={'Send'}
-						onClick={onSubmit}
+						onClick={sendMessage}
 					/>
-				</form>
 			</div>
 
-
-			{/* First example, not actual */}
-			{/* <div>
-					<div>{
-					messages.length === 0 ? <div>No messages</div> :
-						<div>{
-									messages.map(msg => { 
-										const unique_id = uuid();
-										return <div key={unique_id}>{ msg.content}</div>
-									})
-								}</div>
-							}</div>
-						<Input
-							//labeltext={'label text'}
-							placeholder={'Input your message'}
-							value={value}
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
-						/>
-						<Button
-							buttontext={'Send'}
-							onClick={onSubmit}
-						/>
-			</div> */}
 		</div>
 	)
 }

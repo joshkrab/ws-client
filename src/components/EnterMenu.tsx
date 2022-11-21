@@ -15,7 +15,6 @@ export default function EnterMenu({onLogin}:{ onLogin: (obj:{
 		if (!roomId || !userName) {
 		return alert('Input correct data!')
 		}
-		console.log(roomId, userName);
 
 		const obj = {
 			roomId,
