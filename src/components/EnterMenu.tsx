@@ -22,7 +22,8 @@ export default function EnterMenu({onLogin}:{ onLogin: (obj:{
 		}
 		
 		setLoading(true);
-		await axios.post('http://localhost:9001/chat', obj);
+		//await axios.post('http://localhost:9001/chat', obj);
+		await axios.post('https://chatttist.herokuapp.com/chat', obj);
 		onLogin(obj);
 	}
 

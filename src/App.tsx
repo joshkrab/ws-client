@@ -28,7 +28,8 @@ function App() {
     });
     // Create event:
     socket.emit('ROOM:JOIN', obj);
-    const {data} = await axios.get(`http://localhost:9001/chat/rooms/${obj.roomId}`);
+    //const {data} = await axios.get(`http://localhost:9001/chat/rooms/${obj.roomId}`);
+    const {data} = await axios.get(`https://chatttist.herokuapp.com/chat/rooms/${obj.roomId}`);
     //setUsers(data.users);
     dispatch({
       type: 'SET_DATA',
