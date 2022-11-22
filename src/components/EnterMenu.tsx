@@ -31,7 +31,7 @@ export default function EnterMenu({onLogin}:{ onLogin: (obj:{
 		<div className='enter-menu'>
 			<div className="enter-wrapper">
 				<MyInput type="text"
-				placeholder="Room ID"
+				placeholder="Enter Room Name"
 				value={roomId}
 				onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 					setRoomId(e.target.value)
@@ -39,7 +39,7 @@ export default function EnterMenu({onLogin}:{ onLogin: (obj:{
 			/>
 			<MyInput
 				type="text"
-				placeholder="Your name"
+				placeholder="Enter Your Name"
 				value={userName}
 				onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 					setUserName(e.target.value)
