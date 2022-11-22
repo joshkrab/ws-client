@@ -9,6 +9,7 @@ export interface IstateR {
 	userName: string | null,
 	users: string[] | never[],
 	messages: IMessage[] | never[],
+	userWrite: string,
 } 
 
 interface Iaction {
@@ -19,6 +20,7 @@ interface Iaction {
 	roomId?: string | null,
 	users?: string[] | never[],
 	messages?: IMessage[] | never[],
+	userWrite?: string,
 	},
 }
 
@@ -46,6 +48,16 @@ const reducer = (state: IstateR, action: Iaction) => {
 				...state,
 				users: action.payload.users as string[],
 				messages: action.payload.messages as IMessage[],
+			}
+		case 'SET_USER_WRITE':
+			return {
+				...state,
+				userWrite: `${action.payload.userName} write a message...` as string,
+			}
+		case 'REMOVE_USER_WRITE':
+			return {
+				...state,
+				userWrite: '' as string,
 			}
 		default:
 			return state;

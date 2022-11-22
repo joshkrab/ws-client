@@ -5,11 +5,12 @@ import Textarea from './common/Textarea/Textarea';
 import { v4 as uuid } from 'uuid';
 import {IMessage} from '../contexts/reducer';
 
-export const Websocket = ({users, messages, userName, roomId, addMessage}: {
+export const Websocket = ({users, messages, userName, roomId, userWrite, addMessage}: {
 		users: string[] | never[],
 		messages: IMessage[] | never[],
 		userName: string | null,
 		roomId: string | null,
+		userWrite: string,
 		addMessage: (message: IMessage) => void,
 }) => {
 	const [messageValue, setMessageValue] = useState('');
@@ -47,6 +48,19 @@ export const Websocket = ({users, messages, userName, roomId, addMessage}: {
 		messagesRef.current?.scrollTo(0, 999);
 	}, [messages]);
 
+	const writingMonitor = () => { 
+			socket.emit('USER_WRITE', {
+			userName,
+			roomId,
+		});
+	};
+
+	const writingBlurMonitor = () => { 
+			socket.emit('USER_BLUR', {
+			roomId,
+		});
+	};
+
 	return (
 		<div className='chat'>
 			
@@ -64,7 +78,7 @@ export const Websocket = ({users, messages, userName, roomId, addMessage}: {
 
 				<hr />
 				<p>
-					<b>{users[0]}</b> writing message...
+					<b className='user-write'>{userWrite}</b>
 				</p>
 				
 			</div>
@@ -72,8 +86,12 @@ export const Websocket = ({users, messages, userName, roomId, addMessage}: {
 			<div className="chat-messages">
 				<div ref={messagesRef} className="messages">
 					{messages.map(message => {
+						const classArr = ['message'];
+						if (message.userName === userName) {
+							classArr.push('my-message');
+						}
 						const unique_id = uuid();
-						return <div key={unique_id} className="message">
+						return <div key={unique_id} className={classArr.join(' ')}>
 										<p>{message.text}</p>
 										<div>
 												<span>{message.userName}</span>
@@ -86,6 +104,8 @@ export const Websocket = ({users, messages, userName, roomId, addMessage}: {
 					<Textarea
 						value={messageValue}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessageValue(e.target.value)}
+						onFocus={(e: React.FocusEvent<HTMLInputElement>) => writingMonitor()}
+						onBlur={(e: React.FocusEvent<HTMLInputElement>) => writingBlurMonitor()}
 						className="form-control"
 						rows={3}
 						placeholder={'Input your message'}

@@ -27,8 +27,9 @@ export default function EnterMenu({onLogin}:{ onLogin: (obj:{
 	}
 
 	return (
-		<div>
-			<MyInput type="text"
+		<div className='enter-menu'>
+			<div className="enter-wrapper">
+				<MyInput type="text"
 				placeholder="Room ID"
 				value={roomId}
 				onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,6 +45,8 @@ export default function EnterMenu({onLogin}:{ onLogin: (obj:{
 				}}
 			/>
 			<MyButton disabled={isLoading} onClick={onEnter}>{isLoading ? '...Entering': 'Enter' }</MyButton>
+			</div>
+			
 		</div>
 	);
 };

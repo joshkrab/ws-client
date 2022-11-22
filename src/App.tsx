@@ -13,6 +13,7 @@ function App() {
     userName: null,
     users: [], 
     messages: [],
+    userWrite: '',
   });
   const effectRan = useRef(false);
 
@@ -49,10 +50,26 @@ function App() {
     })
   }
 
+  const setWriteMonitor = (userName: string) => {
+    dispatch({
+      type: 'SET_USER_WRITE',
+      payload: {userName: userName},
+    })
+  }
+
+  const removeWriteMonitor = (roomId: string) => {
+    dispatch({
+      type: 'REMOVE_USER_WRITE',
+      payload: {roomId},
+    })
+  }
+
   useEffect(() => {
     if (effectRan.current === false) {
       socket.on('ROOM:SET_USERS', setUsers);
       socket.on('ROOM:NEW_MESSAGE', setMessage);
+      socket.on('FE:USER_WRITE', setWriteMonitor);
+      socket.on('FE:USER_BLUR', removeWriteMonitor);
     };
 
      // When unmount component: close and open, otherwise it is mounted twice:
