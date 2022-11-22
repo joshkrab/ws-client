@@ -1,5 +1,5 @@
 export interface IMessage {
-	userName: string,
+	userName: string | null,
 	text: string,
 }
 
@@ -40,6 +40,12 @@ const reducer = (state: IstateR, action: Iaction) => {
 			return {
 				...state,
 				messages: [...state.messages, action.payload] as IMessage[],
+			}
+		case 'SET_DATA':
+			return {
+				...state,
+				users: action.payload.users as string[],
+				messages: action.payload.messages as IMessage[],
 			}
 		default:
 			return state;

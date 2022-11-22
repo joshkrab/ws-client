@@ -28,7 +28,11 @@ function App() {
     // Create event:
     socket.emit('ROOM:JOIN', obj);
     const {data} = await axios.get(`http://localhost:9001/chat/rooms/${obj.roomId}`);
-    setUsers(data.users);
+    //setUsers(data.users);
+    dispatch({
+      type: 'SET_DATA',
+      payload: data,
+    })
   };
 
   const setUsers = (users: string[]) => {
@@ -60,7 +64,7 @@ function App() {
 
   return (
     <div className='App'>
-      {!state.joined ? <EnterMenu onLogin={onLogin} /> : <Websocket {...state} />}
+      {!state.joined ? <EnterMenu onLogin={onLogin} /> : <Websocket {...state} addMessage={setMessage} />}
     </div>
   );
 };

@@ -1,18 +1,20 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {WebsocketContext} from '../contexts/WebsocketContext';
 import Button from './common/Button/Button';
 import Textarea from './common/Textarea/Textarea';
 import { v4 as uuid } from 'uuid';
 import {IMessage} from '../contexts/reducer';
 
-export const Websocket = ({users, messages, userName, roomId}: {
+export const Websocket = ({users, messages, userName, roomId, addMessage}: {
 		users: string[] | never[],
 		messages: IMessage[] | never[],
 		userName: string | null,
 		roomId: string | null,
+		addMessage: (message: IMessage) => void,
 }) => {
 	const [messageValue, setMessageValue] = useState('');
 	const socket = useContext(WebsocketContext);
+	const messagesRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		socket.on('connect', () => {
@@ -33,23 +35,42 @@ export const Websocket = ({users, messages, userName, roomId}: {
 			userName,
 			roomId,
 		});
+		// Add message for myself
+		addMessage({
+			text: messageValue,
+			userName,
+		});
 		setMessageValue('');
 	}
 
+	useEffect(() => { 
+		messagesRef.current?.scrollTo(0, 999);
+	}, [messages]);
+
 	return (
 		<div className='chat'>
+			
 			<div className="chat-users">
+				<h2>Room: {roomId}</h2>
+				<hr/>
 				<b>Online ({users.length}):</b>
+				
 				<ul>
 					{users.map(name => {
 						const unique_id = uuid();
 						return <li key={unique_id}>{name}</li>
 					})}
 				</ul>
+
+				<hr />
+				<p>
+					<b>{users[0]}</b> writing message...
+				</p>
+				
 			</div>
 
 			<div className="chat-messages">
-				<div className="messages">
+				<div ref={messagesRef} className="messages">
 					{messages.map(message => {
 						const unique_id = uuid();
 						return <div key={unique_id} className="message">
@@ -61,7 +82,7 @@ export const Websocket = ({users, messages, userName, roomId}: {
 									}
 						)}
 				</div>
-
+				<div className="chat-input">
 					<Textarea
 						value={messageValue}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessageValue(e.target.value)}
@@ -74,6 +95,8 @@ export const Websocket = ({users, messages, userName, roomId}: {
 						buttontext={'Send'}
 						onClick={sendMessage}
 					/>
+				</div>
+					
 			</div>
 
 		</div>
