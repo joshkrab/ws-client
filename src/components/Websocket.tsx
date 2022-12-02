@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState, KeyboardEvent} from 'react';
 import {WebsocketContext} from '../contexts/WebsocketContext';
 import Button from './common/Button/Button';
 import Textarea from './common/Textarea/Textarea';
@@ -30,22 +30,33 @@ export const Websocket = ({users, messages, userName, roomId, userWrite, addMess
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
+	const handleEnter = (event: KeyboardEvent<HTMLElement>) => {
+		// console.log(event.key);
+    // console.log(event.code);
+		if (event.key === 'Enter') {
+      event.preventDefault();
+			sendMessage();
+		};
+  };
+
 	const sendMessage = () => {
-		socket.emit('ROOM:NEW_MESSAGE', {
-			text: messageValue,
-			userName,
-			roomId,
-		});
-		// Add message for myself
-		addMessage({
-			text: messageValue,
-			userName,
-		});
-		setMessageValue('');
-	}
+		if (messageValue.length > 0) {
+			socket.emit('ROOM:NEW_MESSAGE', {
+				text: messageValue,
+				userName,
+				roomId,
+			});
+			// Add message for myself
+			addMessage({
+				text: messageValue,
+				userName,
+			});
+			setMessageValue('');
+		};
+	};
 
 	useEffect(() => { 
-		messagesRef.current?.scrollTo(0, 999);
+		messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
 	}, [messages]);
 
 	const writingMonitor = () => { 
@@ -102,19 +113,22 @@ export const Websocket = ({users, messages, userName, roomId, userWrite, addMess
 				</div>
 				<div className="chat-input">
 					<Textarea
+						onKeyDown={handleEnter} 
 						value={messageValue}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessageValue(e.target.value)}
 						onFocus={(e: React.FocusEvent<HTMLInputElement>) => writingMonitor()}
 						onBlur={(e: React.FocusEvent<HTMLInputElement>) => writingBlurMonitor()}
 						className="form-control"
-						rows={3}
+						rows={2}
 						placeholder={'Input your message'}
 					></Textarea>
-					
+					<div>
 						<Button
 						buttontext={'Send'}
 						onClick={sendMessage}
 					/>
+					</div>
+					
 				</div>
 					
 			</div>
